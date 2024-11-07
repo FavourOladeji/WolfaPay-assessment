@@ -25,6 +25,7 @@ class GetTransactionsTest extends TestCase
         $transactions = Transaction::factory($countOfTransactions)->create();
         Sanctum::actingAs($user);
         $response = $this->get('/api/v1/transactions');
+        dump($response->json());
         $response->assertJsonStructure(['data', 'links', 'meta']);
         $response->assertJsonPath('meta.total', $countOfTransactions)->assertJsonPath('meta.per_page', 10);
         $this->assertDatabaseCount('transactions', $countOfTransactions);
@@ -99,14 +100,12 @@ class GetTransactionsTest extends TestCase
         Transaction::factory($countOfTransactions)->create();
         $sortDirection = "desc";
         $latestTransaction = Transaction::orderBy('created_at', $sortDirection)->first();
-        dump($latestTransaction);
         $payload = http_build_query([
             'sort_column' => 'created_at',
             'sort_direction' => $sortDirection
         ]);
         Sanctum::actingAs($user);
         $response = $this->get("/api/v1/transactions?{$payload}");
-        dump($response->json('data.0'));
         $response
             ->assertJson(
                 fn(AssertableJson $json) =>
