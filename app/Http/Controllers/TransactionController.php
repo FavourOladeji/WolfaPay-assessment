@@ -29,20 +29,21 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $validated = $request->validate([
-            'provider' => ['nullable'],
+            'provider_id' => ['nullable'],
             'sort_column' => ['nullable', Rule::in('amount', 'created_at')],
             'sort_direction' => ['nullable', Rule::in(['asc', 'desc'])],
             'per_page' => ['nullable', 'integer']
         ]);
 
-        $provider = $validated['provider'] ?? null;
+        $providerId = $validated['provider_id'] ?? null;
         $sortColumn = $validated['sort_column'] ?? null;
         $sortDirection = $validated['sort_direction'] ?? 'desc';
         $perPage = $validated['per_page'] ?? 10;
 
         $transactions = Transaction::query()
-            ->when($provider, function (Builder $query) use ($provider) {
-                return $query->where('provider_id', $provider);
+            ->with('provider:id,name')
+            ->when($providerId, function (Builder $query) use ($providerId) {
+                return $query->where('provider_id', $providerId);
             })
             ->when($sortColumn, function (Builder $query) use ($sortColumn, $sortDirection) {
                 return $query->orderBy($sortColumn, $sortDirection);
