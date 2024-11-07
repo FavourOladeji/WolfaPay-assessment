@@ -23,4 +23,9 @@ class Transaction extends Model
         $randomString = Str::random(6);
         return $randomString . $timestamp;
     }
+
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class, 'provider_id');
+    }
 }
