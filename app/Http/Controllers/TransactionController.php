@@ -48,8 +48,7 @@ class TransactionController extends Controller
             ->when($sortColumn, function (Builder $query) use ($sortColumn, $sortDirection) {
                 return $query->orderBy($sortColumn, $sortDirection);
             })
-            ->paginate($perPage);
-
+            ->paginate($perPage)->withQueryString();
 
         return TransactionResource::collection($transactions);
 
@@ -61,7 +60,7 @@ class TransactionController extends Controller
     {
         $transactionDto = TransactionDto::fromRequest($request);
         $transaction = $this->transactionsService->createTransaction($transactionDto);
-        return new TransactionResource($transaction);
+        return $this->successfulResponse(message: 'Transaction created Successfully', data: new TransactionResource($transaction), status: 201);
 
     }
 
@@ -72,6 +71,6 @@ class TransactionController extends Controller
         {
             throw new ModelNotFoundException("Transaction with reference number: {$referenceNumber} not found");
         }
-        return new TransactionResource($transaction);
+        return $this->successfulResponse(data: new TransactionResource($transaction));
     }
 }

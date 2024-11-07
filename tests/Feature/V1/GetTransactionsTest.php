@@ -25,7 +25,6 @@ class GetTransactionsTest extends TestCase
         $transactions = Transaction::factory($countOfTransactions)->create();
         Sanctum::actingAs($user);
         $response = $this->get('/api/v1/transactions');
-        dump($response->json());
         $response->assertJsonStructure(['data', 'links', 'meta']);
         $response->assertJsonPath('meta.total', $countOfTransactions)->assertJsonPath('meta.per_page', 10);
         $this->assertDatabaseCount('transactions', $countOfTransactions);
