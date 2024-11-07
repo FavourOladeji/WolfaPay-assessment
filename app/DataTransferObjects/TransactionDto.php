@@ -18,7 +18,7 @@ class TransactionDto {
     public static function fromRequest(StoreTransactionRequest $request)
     {
         return new self (
-            providerId: $request->validated('user_id'),
+            providerId: $request->validated('provider_id'),
             providerTransactionId: $request->validated('provider_transaction_id'),
             amount: $request->validated('amount'),
         );
